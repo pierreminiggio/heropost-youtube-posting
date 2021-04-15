@@ -1,0 +1,25 @@
+{
+  "name": "@pierreminiggio/heropost-youtube-posting",
+  "version": "1.0.0",
+  "description": "Heropost Youtube Posting",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pierreminiggio/heropost-youtube-posting.git"
+  },
+  "author": "Pierre MINIGGIO",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pierreminiggio/heropost-youtube-posting/issues"
+  },
+  "homepage": "https://github.com/pierreminiggio/heropost-youtube-posting#readme",
+  "dependencies": {
+    "@pierreminiggio/heropost-login": "github:pierreminiggio/heropost-login",
+    "@pierreminiggio/set-default-value-for-key-in-object": "github:pierreminiggio/js-set-default-value-for-key-in-object",
+    "puppeteer": "^8.0.0"
+  }
+}
