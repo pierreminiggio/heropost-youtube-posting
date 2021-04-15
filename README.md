@@ -13,5 +13,5 @@ Utilisation :
 import login from '@pierreminiggio/heropost-youtube-posting'
 
 const page = ...
-await login(page, 'Heropost login or email', 'Heropost password')
+await post('Heropost login or email', 'Heropost password', config = {})
 ```
