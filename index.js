@@ -8,11 +8,12 @@ import setDefault from '@pierreminiggio/set-default-value-for-key-in-object'
  * 
  * @param {string} login
  * @param {string} password
+ * @param {string} channelId
  * @param {HeropostYoutubePostingConfig} config
  * 
  * @returns {Promise}
  */
-export default function (login, password, config = {}) {
+export default function (login, password, channelId, config = {}) {
 
     return new Promise(async (resolve, reject) => {
         
@@ -22,7 +23,7 @@ export default function (login, password, config = {}) {
         
         try {
             browser = await puppeteer.launch({
-                headless: false,
+                headless: ! config.show,
                 args: [
                     '--disable-notifications',
                     '--no-sandbox'
@@ -37,6 +38,27 @@ export default function (login, password, config = {}) {
 
         try {
             await loginToHeropost(page, login, password)
+            await page.goto('https://dashboard.heropost.io/youtube_post')
+
+            const channelIdInListSelector = '[data-pid="' + channelId + '"]'
+
+            try {
+                await page.waitForSelector(channelIdInListSelector)
+            } catch (error) {
+                reject('Channel ' + channelId + ' not set up on heropost account')
+                return
+            }
+
+            try {
+                await page.evaluate(channelIdInListSelector => {
+                    document.querySelector(channelIdInListSelector + ' input').click()
+                }, channelIdInListSelector)
+            } catch (error) {
+                reject('Scraping error : Checkbox for channel ' + channelId + ' is missing !')
+                return
+            }
+ 
+            console.log('yeay')
 
             resolve()
         } catch (e) {
