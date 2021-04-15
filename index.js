@@ -42,6 +42,11 @@ const videoCategories = {
 export default function (login, password, channelId, video, config = {}) {
 
     return new Promise(async (resolve, reject) => {
+
+        if (! Object.values(videoCategories).includes(video.categoryId)) {
+            reject('Bad category id')
+            return
+        }
         
         setDefault(config, 'show', false)
 
