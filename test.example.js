@@ -8,6 +8,11 @@ import post from './index.js'
         'Heropost login or email',
         'Heropost password',
         'Youtube channel id',
+        {
+            title: 'vidéo automatique test',
+            description: 'description automatique test',
+            categoryId: 27
+        },
         {show: true}
     ))
 })()
