@@ -19,6 +19,7 @@
   "homepage": "https://github.com/pierreminiggio/heropost-youtube-posting#readme",
   "dependencies": {
     "@pierreminiggio/heropost-login": "github:pierreminiggio/heropost-login",
+    "@pierreminiggio/puppeteer-text-typer": "github:pierreminiggio/puppeteer-text-typer",
     "@pierreminiggio/set-default-value-for-key-in-object": "github:pierreminiggio/js-set-default-value-for-key-in-object",
     "puppeteer": "^8.0.0"
   }

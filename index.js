@@ -1,6 +1,7 @@
 import loginToHeropost from '@pierreminiggio/heropost-login'
 import puppeteer from 'puppeteer'
 import setDefault from '@pierreminiggio/set-default-value-for-key-in-object'
+import type from '@pierreminiggio/puppeteer-text-typer'
 
 const videoCategories = {
     'Film & Animation': 1,
@@ -103,6 +104,14 @@ export default function (login, password, channelId, video, config = {}) {
                 document.querySelector(categorySelectSelector).value = categoryId
             }, categorySelectSelector, video.categoryId)
  
+            const descriptionInputSelector = '.emojionearea-editor'
+            try {
+                await page.waitForSelector(descriptionInputSelector)
+            } catch (error) {
+                throw new Error('Scraping error : Description input selector is missing !')
+            }
+
+            await type(page, descriptionInputSelector, video.description)
             console.log('yeay')
 
             resolve()
