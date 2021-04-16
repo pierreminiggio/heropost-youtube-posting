@@ -77,7 +77,7 @@ export default function (login, password, channelId, video, config = {}) {
             try {
                 await page.waitForSelector(channelIdInListSelector)
             } catch (error) {
-                throw new Error('Channel ' + channelId + ' not set up on heropost account')
+                throw new Error('Heropost/Youtube error : Channel ' + channelId + ' not set up on heropost account or Youtube quota exceeded')
             }
 
             try {
@@ -136,22 +136,10 @@ export default function (login, password, channelId, video, config = {}) {
             
             await fileChooser.accept([video.videoFilePath])
 
-            const message = await page.evaluate(async () => {
-                const message = await new Promise(resolve => {
-                    const interval = setInterval(() => {
-                        const toast = document.querySelector('.iziToast')
-                        if (toast !== null && toast.innerText.trim()) {
-                            resolve(toast.innerText)
-                            clearInterval(interval)
-                        }
-                    }, 10)
-                })
-
-                return message
-            })
+            const fileStatusMessage = await getToastMessage(page)
             
-            if (message !== 'File saved') {
-                throw new Error('File could not be saved :' + message)
+            if (fileStatusMessage !== 'File saved') {
+                throw new Error('File could not be saved :' + fileStatusMessage)
             }
 
             const postButtonSelector = '.btn-post-now'
@@ -161,11 +149,50 @@ export default function (login, password, channelId, video, config = {}) {
                 throw new Error('Scraping error : Post button selector is missing !')
             }
 
+            await page.waitForTimeout(10000)
+
             await page.click(postButtonSelector)
+
+            const uploadStatusMessage = await getToastMessage(page)
+
+            if (uploadStatusMessage.includes('quota')) {
+                throw new Error('Heropost/Youtube error : Quota exceeded !')
+            }
+
+
+            console.log(uploadStatusMessage)
 
             resolve()
         } catch (e) {
+            await browser.close()
             reject(e)
         }
+    })
+}
+
+/**
+ * @param {puppeteer.Page} page
+ * 
+ * @returns {Promise<string>} 
+ */
+function getToastMessage(page) {
+    return new Promise(async resolve => {
+        const message = await page.evaluate(async () => {
+            const message = await new Promise(resolve => {
+                const toastInterval = setInterval(() => {
+                    console.log('finding...')
+                    const toast = document.querySelector('.iziToast')
+                    if (toast !== null && toast.innerText.trim()) {
+                        console.log('found')
+                        resolve(toast.innerText)
+                        clearInterval(toastInterval)
+                    }
+                }, 10)
+            })
+
+            return message
+        })
+
+        resolve(message)
     })
 }
