@@ -11,7 +11,8 @@ import post from './index.js'
         {
             title: 'vidéo automatique test',
             description: 'description automatique test',
-            categoryId: 27
+            categoryId: 27,
+            videoFilePath: 'test.mp4'
         },
         {show: true}
     ))

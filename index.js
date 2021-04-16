@@ -27,6 +27,7 @@ const videoCategories = {
  * @property {string} title
  * @property {string} description
  * @property {number} categoryId
+ * @property {string} videoFilePath
  * 
  * @typedef {Object} HeropostYoutubePostingConfig
  * @property {boolean} show default false
@@ -117,7 +118,50 @@ export default function (login, password, channelId, video, config = {}) {
             }
 
             await type(page, descriptionInputSelector, video.description)
-            console.log('yeay')
+
+            const videoInputSelector = '#upload_video'
+
+            try {
+                await page.waitForSelector(videoInputSelector)
+            } catch (error) {
+                throw new Error('Scraping error : Video file input selector is missing !')
+            }
+
+            await page.waitForTimeout(3000)
+
+            const [fileChooser] = await Promise.all([
+                page.waitForFileChooser(),
+                page.click('.fileinput-button')
+            ])
+            
+            await fileChooser.accept([video.videoFilePath])
+
+            const message = await page.evaluate(async () => {
+                const message = await new Promise(resolve => {
+                    const interval = setInterval(() => {
+                        const toast = document.querySelector('.iziToast')
+                        if (toast !== null && toast.innerText.trim()) {
+                            resolve(toast.innerText)
+                            clearInterval(interval)
+                        }
+                    }, 10)
+                })
+
+                return message
+            })
+            
+            if (message !== 'File saved') {
+                throw new Error('File could not be saved :' + message)
+            }
+
+            const postButtonSelector = '.btn-post-now'
+            try {
+                await page.waitForSelector(postButtonSelector)
+            } catch (error) {
+                throw new Error('Scraping error : Post button selector is missing !')
+            }
+
+            await page.click(postButtonSelector)
 
             resolve()
         } catch (e) {
