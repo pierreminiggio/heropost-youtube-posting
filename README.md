@@ -13,5 +13,16 @@ Utilisation :
 import login from '@pierreminiggio/heropost-youtube-posting'
 
 const page = ...
-await post('Heropost login or email', 'Heropost password', config = {})
+await post(
+    'Heropost login or email',
+    'Heropost password',
+    'Youtube Channel Id',
+    {
+        title: 'Video title',
+        description: 'Video description',
+        categoryId: 27,
+        videoFilePath: 'test.mp4'
+    },
+    config = {}
+)
 ```
