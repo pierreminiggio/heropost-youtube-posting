@@ -70,7 +70,8 @@ export default function (login, password, channelId, video, config = {}) {
 
         try {
             await loginToHeropost(page, login, password)
-            await page.goto('https://dashboard.heropost.io/youtube_post')
+            const youtubePostPage = 'https://dashboard.heropost.io/youtube_post'
+            await page.goto(youtubePostPage)
 
             const channelIdInListSelector = '[data-pid="' + channelId + '"]'
 
@@ -159,10 +160,50 @@ export default function (login, password, channelId, video, config = {}) {
                 throw new Error('Heropost/Youtube error : Quota exceeded !')
             }
 
+            if (! uploadStatusMessage.includes('Content is being published')) {
+                throw new Error('Heropost/Youtube error : Unknow error while posting')
+            }
 
-            console.log(uploadStatusMessage)
+            await page.goto(youtubePostPage)
 
-            resolve()
+            const bellButtonSelector = 'a[data-original-title="Schedule history"]'
+
+            try {
+                await page.waitForSelector(bellButtonSelector)
+            } catch (error) {
+                throw new Error('Scraping error : Bell button selector is missing !')
+            }
+
+            await page.click(bellButtonSelector)
+
+            const postedItemSelector = '.item.search-schedule'
+            try {
+                await page.waitForSelector(postedItemSelector)
+            } catch (error) {
+                throw new Error('Scraping error : Posted item selector is missing !')
+            }
+
+            const successStatusSelector = postedItemSelector + ' .status.text-success'
+            try {
+                await page.waitForSelector(successStatusSelector)
+            } catch (error) {
+                throw new Error('Heropost/Youtube error : Youtube API returned an error ?')
+            }
+
+            const videoLinkSelector = successStatusSelector + ' a'
+            try {
+                await page.waitForSelector(videoLinkSelector)
+            } catch (error) {
+                throw new Error('Heropost/Youtube error : Video link not found ?')
+            }
+
+            const link = await page.evaluate(videoLinkSelector => {
+                return document.querySelector(videoLinkSelector).href
+            }, videoLinkSelector)
+
+            await browser.close()
+
+            resolve(link)
         } catch (e) {
             await browser.close()
             reject(e)
@@ -180,10 +221,8 @@ function getToastMessage(page) {
         const message = await page.evaluate(async () => {
             const message = await new Promise(resolve => {
                 const toastInterval = setInterval(() => {
-                    console.log('finding...')
                     const toast = document.querySelector('.iziToast')
                     if (toast !== null && toast.innerText.trim()) {
-                        console.log('found')
                         resolve(toast.innerText)
                         clearInterval(toastInterval)
                     }
