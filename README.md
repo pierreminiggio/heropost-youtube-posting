@@ -10,9 +10,8 @@ npm install pierreminiggio/heropost-youtube-posting
 
 Utilisation : 
 ```javascript
-import login from '@pierreminiggio/heropost-youtube-posting'
+import post from '@pierreminiggio/heropost-youtube-posting'
 
-const page = ...
 await post(
     'Heropost login or email',
     'Heropost password',
