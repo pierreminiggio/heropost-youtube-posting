@@ -7,7 +7,7 @@ import post from './index.js'
     console.log(await post(
         'Heropost login or email',
         'Heropost password',
-        'Youtube channel id',
+        '@Youtube channel tag',
         {
             title: 'vidéo automatique test',
             description: 'description automatique test',
