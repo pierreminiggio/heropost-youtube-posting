@@ -21,7 +21,6 @@
     "@pierreminiggio/heropost-login": "github:pierreminiggio/heropost-login",
     "@pierreminiggio/puppeteer-text-typer": "github:pierreminiggio/puppeteer-text-typer",
     "@pierreminiggio/set-default-value-for-key-in-object": "github:pierreminiggio/js-set-default-value-for-key-in-object",
-    "puppeteer": "^10.4.0",
     "puppeteer-element2selector": "^0.0.3"
   }
 }
